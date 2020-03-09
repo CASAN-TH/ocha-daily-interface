@@ -1,0 +1,266 @@
+[
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "โกโก้ร้อนHot Cocoa",
+    "item_name": "โกโก้ร้อนHot Cocoa",
+    "unit_price": 80,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ลาบกะพงทอดDeep fried red snapper and herb salad",
+    "item_name": "ลาบกะพงทอดDeep fried red snapper and herb salad",
+    "unit_price": 180,
+    "quantity": 2
+  },
+  {
+    "item_cid": "แกงเหลืองปลากะพงSpicy and sour curry soup",
+    "item_name": "แกงเหลืองปลากะพงSpicy and sour curry soup",
+    "unit_price": 180,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ไข่เจียว",
+    "item_name": "ไข่เจียว",
+    "unit_price": 60,
+    "quantity": 4
+  },
+  {
+    "item_cid": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "item_name": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "unit_price": 100,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ไก่ต้มขมิ้นBoiled chicken with turmeric",
+    "item_name": "ไก่ต้มขมิ้นBoiled chicken with turmeric",
+    "unit_price": 180,
+    "quantity": 2
+  },
+  {
+    "item_cid": "น้ำพริกศรีสะใภ้Hot dip shrimp paste with fresh shrimp",
+    "item_name": "น้ำพริกศรีสะใภ้Hot dip shrimp paste with fresh shrimp",
+    "unit_price": 180,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ส้มตําใบเหลียงทอดกุ้งสด/LIENG lcoal vegetable",
+    "item_name": "ส้มตําใบเหลียงทอดกุ้งสด/LIENG lcoal vegetable",
+    "unit_price": 150,
+    "quantity": 2
+  },
+  {
+    "item_cid": "งานเลี้ยงและสัมนา",
+    "item_name": "งานเลี้ยงและสัมนา",
+    "unit_price": 360,
+    "quantity": 1
+  },
+  {
+    "item_cid": "กล้วยทอดใหญ่Deep fried banana(L)",
+    "item_name": "กล้วยทอดใหญ่Deep fried banana(L)",
+    "unit_price": 150,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ข้าวสวยSteamed rice",
+    "item_name": "ข้าวสวยSteamed rice",
+    "unit_price": 95,
+    "quantity": 4
+  },
+  {
+    "item_cid": "ขนมโคน้ำDumping coconut ball in coconut milk",
+    "item_name": "ขนมโคน้ำDumping coconut ball in coconut milk",
+    "unit_price": 55,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ไข่เจียว",
+    "item_name": "ไข่เจียว",
+    "unit_price": 60,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "item_name": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "unit_price": 100,
+    "quantity": 1
+  },
+  {
+    "item_cid": "แกงจืดเต้าหู้หมูสับ-สาหร่ายAssorted vegetable & tofu soup",
+    "item_name": "แกงจืดเต้าหู้หมูสับ-สาหร่ายAssorted vegetable & tofu soup",
+    "unit_price": 120,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ข้าวสวยSteamed rice",
+    "item_name": "ข้าวสวยSteamed rice",
+    "unit_price": 25,
+    "quantity": 4
+  },
+  {
+    "item_cid": "กุ้งชุบแป้งทอดDeep fried prawn and vegetable",
+    "item_name": "กุ้งชุบแป้งทอดDeep fried prawn and vegetable",
+    "unit_price": 150,
+    "quantity": 1
+  },
+  {
+    "item_cid": "น้ำดื่มWater",
+    "item_name": "น้ำดื่มWater",
+    "unit_price": 25,
+    "quantity": 2
+  },
+  {
+    "item_cid": "กล้วยทอดเล็กDeep fried banana(s)",
+    "item_name": "กล้วยทอดเล็กDeep fried banana(s)",
+    "unit_price": 60,
+    "quantity": 2
+  },
+  {
+    "item_cid": "ข้าวเหนียวกล้อง",
+    "item_name": "ข้าวเหนียวกล้อง",
+    "unit_price": 250,
+    "quantity": 4
+  },
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ข้าวเหนียวกล้อง",
+    "item_name": "ข้าวเหนียวกล้อง",
+    "unit_price": 250,
+    "quantity": 2
+  },
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "อาหารนอกรายการ",
+    "item_name": "อาหารนอกรายการ",
+    "unit_price": 120,
+    "quantity": 1
+  },
+  {
+    "item_cid": "น้ําผึ้งมะนาวโซดาHoney Lime  Soda",
+    "item_name": "น้ําผึ้งมะนาวโซดาHoney Lime  Soda",
+    "unit_price": 80,
+    "quantity": 1
+  },
+  {
+    "item_cid": "เฟรนช์ฟรายด์French Fried",
+    "item_name": "เฟรนช์ฟรายด์French Fried",
+    "unit_price": 90,
+    "quantity": 2
+  },
+  {
+    "item_cid": "น้ำดื่มWater",
+    "item_name": "น้ำดื่มWater",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "กล้วยปั่นช็อคโกแลตBanana chocolate  shaked",
+    "item_name": "กล้วยปั่นช็อคโกแลตBanana chocolate  shaked",
+    "unit_price": 80,
+    "quantity": 1
+  },
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "กล้วยทอดใหญ่Deep fried banana(L)",
+    "item_name": "กล้วยทอดใหญ่Deep fried banana(L)",
+    "unit_price": 150,
+    "quantity": 1
+  },
+  {
+    "item_cid": "น้ำดื่มWater",
+    "item_name": "น้ำดื่มWater",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "กุ้งทอดราดซอสมะขาม/Fried prawn with tamarind sauce",
+    "item_name": "กุ้งทอดราดซอสมะขาม/Fried prawn with tamarind sauce",
+    "unit_price": 250,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "item_name": "ใบเหลียงผัดไข่Stir-fried local vegetable with eggs",
+    "unit_price": 100,
+    "quantity": 1
+  },
+  {
+    "item_cid": "จานย่างMixed grilled",
+    "item_name": "จานย่างMixed grilled",
+    "unit_price": 200,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ข้าวสวยSteamed rice",
+    "item_name": "ข้าวสวยSteamed rice",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "โค้กCoke",
+    "item_name": "โค้กCoke",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "มะพร้าวลูก",
+    "item_name": "มะพร้าวลูก",
+    "unit_price": 50,
+    "quantity": 1
+  },
+  {
+    "item_cid": "น้ำดื่มWater",
+    "item_name": "น้ำดื่มWater",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "น้ำแข็งIce",
+    "item_name": "น้ำแข็งIce",
+    "unit_price": 25,
+    "quantity": 1
+  },
+  {
+    "item_cid": "ชอร์เบท์มะพร้าว Coconut  ice cream",
+    "item_name": "ชอร์เบท์มะพร้าว Coconut  ice cream",
+    "unit_price": 55,
+    "quantity": 1
+  },
+  {
+    "item_cid": "กล้วยทอดเล็กDeep fried banana(s)",
+    "item_name": "กล้วยทอดเล็กDeep fried banana(s)",
+    "unit_price": 60,
+    "quantity": 2
+  },
+  {
+    "item_cid": "กล้วยปั่นช็อคโกแลตBanana chocolate  shaked",
+    "item_name": "กล้วยปั่นช็อคโกแลตBanana chocolate  shaked",
+    "unit_price": 80,
+    "quantity": 1
+  }
+]

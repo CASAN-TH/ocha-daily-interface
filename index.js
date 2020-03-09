@@ -30,7 +30,9 @@ const run = async dateStr => {
     start_time,
     end_time
   );
-  if (orders2) writeXLS(orders2, wb, shops.shops[1].profile.shop_name);
+  if (orders2) {
+    writeXLS(orders2, wb, shops.shops[1].profile.shop_name);
+  }
 
   const orders3 = await ocha.getDailyOrdersByShop(
     shops.shops[2].shop_id,
@@ -113,12 +115,13 @@ function write365XLS(orders, wb, filename) {
   ws.cell(2, 8).string("รวม");
 
   var i = 3;
+  var j = 1;
   resultSum.forEach(detail => {
     if (isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
       // console.log(vat_rate);
-      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 1).number(j);
       ws.cell(i, 2).string(detail.item_name);
       ws.cell(i, 3)
         .number(detail.quantity || 0)
@@ -142,6 +145,7 @@ function write365XLS(orders, wb, filename) {
         .number(detail.unit_price * detail.quantity)
         .style(numStyle);
       i++;
+      j++;
     }
   });
   i++;
@@ -157,13 +161,13 @@ function write365XLS(orders, wb, filename) {
   ws.cell(i, 7).string("ภาษี");
   ws.cell(i, 8).string("รวม");
   i++;
-
+  j = 1;
   resultSum.forEach(detail => {
     if (!isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
       // console.log(vat_rate);
-      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 1).number(j);
       ws.cell(i, 2).string(detail.item_name);
       ws.cell(i, 3)
         .number(detail.quantity || 0)
@@ -187,6 +191,7 @@ function write365XLS(orders, wb, filename) {
         .number(detail.unit_price * detail.quantity)
         .style(numStyle);
       i++;
+      j++;
     }
   });
 }
@@ -196,7 +201,7 @@ function writeXLS(orders, wb, filename) {
   orders.forEach(order => {
     order.items.forEach(value => {
       result.push({
-        item_cid: value.item_cid,
+        item_cid: value.item_name,
         item_name: value.item_name,
         unit_price: parseInt(value.money_nominal) / value.quantity,
         quantity: value.quantity
@@ -204,6 +209,7 @@ function writeXLS(orders, wb, filename) {
     });
   });
   // console.log(result);
+
   resultSum = [];
   result.reduce(function(res, value) {
     if (!res[value.item_cid]) {
@@ -214,9 +220,14 @@ function writeXLS(orders, wb, filename) {
         vat_rate: 7,
         quantity: value.quantity
       };
+
       resultSum.push(res[value.item_cid]);
+    } else {
+      res[value.item_cid].quantity += value.quantity;
+      // if (value.item_name === "โค้กCoke") console.log(res[value.item_cid]);
+      // console.log(res[value.item_cid])
     }
-    res[value.item_cid].quantity += value.quantity;
+
     return res;
   }, {});
   // console.log(resultSum);
@@ -237,12 +248,14 @@ function writeXLS(orders, wb, filename) {
   ws.cell(2, 8).string("รวม");
 
   var i = 3;
+  var j = 1;
   resultSum.forEach(detail => {
     if (isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
+      // if(detail.item_name==="โค้กCoke") console.log(detail)
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
       // console.log(vat_rate);
-      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 1).number(j);
       ws.cell(i, 2).string(detail.item_name);
       ws.cell(i, 3)
         .number(detail.quantity || 0)
@@ -266,6 +279,7 @@ function writeXLS(orders, wb, filename) {
         .number(detail.unit_price * detail.quantity)
         .style(numStyle);
       i++;
+      j++;
     }
   });
   i++;
@@ -281,13 +295,13 @@ function writeXLS(orders, wb, filename) {
   ws.cell(i, 7).string("ภาษี");
   ws.cell(i, 8).string("รวม");
   i++;
-
+  j = 1;
   resultSum.forEach(detail => {
     if (!isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
       // console.log(vat_rate);
-      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 1).number(j);
       ws.cell(i, 2).string(detail.item_name);
       ws.cell(i, 3)
         .number(detail.quantity || 0)
@@ -311,6 +325,7 @@ function writeXLS(orders, wb, filename) {
         .number(detail.unit_price * detail.quantity)
         .style(numStyle);
       i++;
+      j++;
     }
   });
 }

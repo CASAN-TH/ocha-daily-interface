@@ -185,50 +185,11 @@ interfaceOcha = async (posocha, start_time, end_time) => {
     };
     const response = await fetch(url, options);
     const json = await response.json();
+    // console.log(json.orders.length);
 
     // 3.3. Map ข้อมูล Orders ตามโครงสร้างของเรา
     const promiseOrd = json.orders.map(async (od, idx) => {
-      orders.push(od);
-      //   let ood = {
-      //     no: od.payments[0].receipt_number_v2,
-      //     createdAt: od.order.add_time,
-      //     status: od.order.status,
-      //     customerName: od.order.name,
-      //     paymentProvider: "cash",
-      //     subtotal: 0,
-      //     discount: 0,
-      //     total: od.order.money_payable,
-      //     paidAt: od.payments[0].upd_time,
-      //     paidAmount: od.payments[0].money_to_pay,
-      //     note: od.order.note,
-      //     items: [],
-      //     discounts: [],
-      //     voidedAt: od.voided ? od.voided.upd_time : null
-      //   };
-      //   od.items.forEach(item => {
-      //     ood.subtotal += parseInt(item.money_nominal);
-      //     ood.items.push({
-      //       itemCode: item.item_cid,
-      //       itemName: item.item_name,
-      //       itemQty: item.quantity,
-      //       itemPrice: item.item_price.unit_price,
-      //       itemSubtotal: item.money_nominal
-      //     });
-      //   });
-      //   if (od.discounts) {
-      //     od.discounts.forEach(discount => {
-      //       ood.discountAmount += parseInt(discount.discounted_value);
-      //       ood.discounts.push({
-      //         name: discount.name,
-      //         value: discount.value,
-      //         quantity: discount.quantity,
-      //         amount: discount.discounted_value
-      //       });
-      //     });
-      //   }
       if (od.order.status === 0) {
-        // let ood = {};
-        // od.items.forEach(item => {});
         orders.push(od);
       }
     });
@@ -237,6 +198,6 @@ interfaceOcha = async (posocha, start_time, end_time) => {
 
   // 3.4.  รอ loop อ่านข้อมูลจนครบตามสัญญา (promise)
   await Promise.all(promise);
-  //   console.log(orders.length);
+    // console.log(JSON.stringify(orders));
   return orders;
 };

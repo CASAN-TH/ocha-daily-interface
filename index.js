@@ -3,6 +3,7 @@ const p356 = require("./libs/page365");
 const xls = require("excel4node");
 
 const run = async dateStr => {
+  
   var wb = new xls.Workbook();
   var start = new Date(dateStr);
   start.setHours(0, 0, 0, 0);
@@ -12,6 +13,7 @@ const run = async dateStr => {
   let start_time = start / 1000;
   let end_time = end / 1000;
   const shops = await ocha.getOchaShopList();
+  
   if (shops.error_code !== 0) {
     process.exit(0);
   }
@@ -76,7 +78,7 @@ function write365XLS(orders, wb, filename) {
       result.push({
         item_cid: value.name,
         item_name: value.name,
-        unit_price: value.price,
+        subtotal: value.price * value.quantity,
         quantity: value.quantity
       });
     });
@@ -88,13 +90,16 @@ function write365XLS(orders, wb, filename) {
       res[value.item_cid] = {
         item_cid: value.item_cid,
         item_name: value.item_name,
-        unit_price: value.unit_price,
+        subtotal: value.subtotal,
         vat_rate: 7,
         quantity: value.quantity
       };
       resultSum.push(res[value.item_cid]);
+    }else{
+      res[value.item_cid].quantity += value.quantity;
+      res[value.item_cid].subtotal += value.subtotal;
     }
-    res[value.item_cid].quantity += value.quantity;
+    
     return res;
   }, {});
   // console.log(resultSum);
@@ -108,11 +113,11 @@ function write365XLS(orders, wb, filename) {
   ws.cell(2, 1).string("ลำดับ");
   ws.cell(2, 2).string("ชื่อสินค้า");
   ws.cell(2, 3).string("จำนวน");
-  ws.cell(2, 4).string("ราคาต่อหน่วย");
-  ws.cell(2, 5).string("vat(%)");
-  ws.cell(2, 6).string("จำนวนเงิน");
-  ws.cell(2, 7).string("ภาษี");
-  ws.cell(2, 8).string("รวม");
+  // ws.cell(2, 4).string("ราคาต่อหน่วย");
+  ws.cell(2, 4).string("vat(%)");
+  ws.cell(2, 5).string("จำนวนเงิน");
+  ws.cell(2, 6).string("ภาษี");
+  ws.cell(2, 7).string("รวม");
 
   var i = 3;
   var j = 1;
@@ -126,23 +131,23 @@ function write365XLS(orders, wb, filename) {
       ws.cell(i, 3)
         .number(detail.quantity || 0)
         .style(numStyle);
+      // ws.cell(i, 4)
+      //   .number(detail.unit_price || 0)
+      //   .style(numStyle);
       ws.cell(i, 4)
-        .number(detail.unit_price || 0)
-        .style(numStyle);
-      ws.cell(i, 5)
         .number((vat_rate - 1) * 100)
         .style(numStyle);
-      ws.cell(i, 6)
-        .number((detail.unit_price * detail.quantity) / vat_rate)
+      ws.cell(i, 5)
+        .number((detail.subtotal) / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
+      ws.cell(i, 6)
         .number(
-          detail.unit_price * detail.quantity -
-            (detail.unit_price * detail.quantity) / vat_rate
+          detail.subtotal -
+            (detail.subtotal / vat_rate)
         )
         .style(numStyle);
-      ws.cell(i, 8)
-        .number(detail.unit_price * detail.quantity)
+      ws.cell(i, 7)
+        .number(detail.subtotal)
         .style(numStyle);
       i++;
       j++;
@@ -155,11 +160,11 @@ function write365XLS(orders, wb, filename) {
   ws.cell(i, 1).string("ลำดับ");
   ws.cell(i, 2).string("ชื่อสินค้า");
   ws.cell(i, 3).string("จำนวน");
-  ws.cell(i, 4).string("ราคาต่อหน่วย");
-  ws.cell(i, 5).string("vat(%)");
-  ws.cell(i, 6).string("จำนวนเงิน");
-  ws.cell(i, 7).string("ภาษี");
-  ws.cell(i, 8).string("รวม");
+  // ws.cell(i, 4).string("ราคาต่อหน่วย");
+  ws.cell(i, 4).string("vat(%)");
+  ws.cell(i, 5).string("จำนวนเงิน");
+  ws.cell(i, 6).string("ภาษี");
+  ws.cell(i, 7).string("รวม");
   i++;
   j = 1;
   resultSum.forEach(detail => {
@@ -172,23 +177,23 @@ function write365XLS(orders, wb, filename) {
       ws.cell(i, 3)
         .number(detail.quantity || 0)
         .style(numStyle);
+      // ws.cell(i, 4)
+      //   .number(detail.unit_price || 0)
+        // .style(numStyle);
       ws.cell(i, 4)
-        .number(detail.unit_price || 0)
-        .style(numStyle);
-      ws.cell(i, 5)
         .number((vat_rate - 1) * 100)
         .style(numStyle);
-      ws.cell(i, 6)
-        .number((detail.unit_price * detail.quantity) / vat_rate)
+      ws.cell(i, 5)
+        .number((detail.subtotal) / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
+      ws.cell(i,6)
         .number(
-          detail.unit_price * detail.quantity -
-            (detail.unit_price * detail.quantity) / vat_rate
+          detail.subtotal -
+            (detail.subtotal / vat_rate)
         )
         .style(numStyle);
-      ws.cell(i, 8)
-        .number(detail.unit_price * detail.quantity)
+      ws.cell(i, 7)
+        .number(detail.subtotal)
         .style(numStyle);
       i++;
       j++;
@@ -199,11 +204,13 @@ function write365XLS(orders, wb, filename) {
 function writeXLS(orders, wb, filename) {
   var result = [];
   orders.forEach(order => {
+    // console.log(order.items);
     order.items.forEach(value => {
       result.push({
         item_cid: value.item_name,
         item_name: value.item_name,
-        unit_price: parseInt(value.money_nominal) / value.quantity,
+        subtotal: parseInt(value.money_nominal),
+        // unit_price: parseInt(value.money_nominal) / value.quantity,
         quantity: value.quantity
       });
     });
@@ -216,14 +223,16 @@ function writeXLS(orders, wb, filename) {
       res[value.item_cid] = {
         item_cid: value.item_cid,
         item_name: value.item_name,
-        unit_price: value.unit_price,
         vat_rate: 7,
+        subtotal: value.subtotal,
+        // unit_price: value.unit_price,
         quantity: value.quantity
       };
 
       resultSum.push(res[value.item_cid]);
     } else {
       res[value.item_cid].quantity += value.quantity;
+      res[value.item_cid].subtotal += value.subtotal;
       // if (value.item_name === "โค้กCoke") console.log(res[value.item_cid]);
       // console.log(res[value.item_cid])
     }
@@ -241,11 +250,11 @@ function writeXLS(orders, wb, filename) {
   ws.cell(2, 1).string("ลำดับ");
   ws.cell(2, 2).string("ชื่อสินค้า");
   ws.cell(2, 3).string("จำนวน");
-  ws.cell(2, 4).string("ราคาต่อหน่วย");
-  ws.cell(2, 5).string("vat(%)");
-  ws.cell(2, 6).string("จำนวนเงิน");
-  ws.cell(2, 7).string("ภาษี");
-  ws.cell(2, 8).string("รวม");
+  // ws.cell(2, 4).string("ราคาต่อหน่วย");
+  ws.cell(2, 4).string("vat(%)");
+  ws.cell(2, 5).string("ยอดขาย");
+  ws.cell(2, 6).string("ภาษี");
+  ws.cell(2, 7).string("รวม");
 
   var i = 3;
   var j = 1;
@@ -260,23 +269,23 @@ function writeXLS(orders, wb, filename) {
       ws.cell(i, 3)
         .number(detail.quantity || 0)
         .style(numStyle);
+      // ws.cell(i, 4)
+      //   .number(detail.unit_price || 0)
+      //   .style(numStyle);
       ws.cell(i, 4)
-        .number(detail.unit_price || 0)
-        .style(numStyle);
-      ws.cell(i, 5)
         .number((vat_rate - 1) * 100)
         .style(numStyle);
-      ws.cell(i, 6)
-        .number((detail.unit_price * detail.quantity) / vat_rate)
+      ws.cell(i, 5)
+        .number(detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
+      ws.cell(i, 6)
         .number(
-          detail.unit_price * detail.quantity -
-            (detail.unit_price * detail.quantity) / vat_rate
+          detail.subtotal -
+            (detail.subtotal / vat_rate)
         )
         .style(numStyle);
-      ws.cell(i, 8)
-        .number(detail.unit_price * detail.quantity)
+      ws.cell(i, 7)
+        .number(detail.subtotal)
         .style(numStyle);
       i++;
       j++;
@@ -289,11 +298,11 @@ function writeXLS(orders, wb, filename) {
   ws.cell(i, 1).string("ลำดับ");
   ws.cell(i, 2).string("ชื่อสินค้า");
   ws.cell(i, 3).string("จำนวน");
-  ws.cell(i, 4).string("ราคาต่อหน่วย");
-  ws.cell(i, 5).string("vat(%)");
-  ws.cell(i, 6).string("จำนวนเงิน");
-  ws.cell(i, 7).string("ภาษี");
-  ws.cell(i, 8).string("รวม");
+  // ws.cell(i, 4).string("ราคาต่อหน่วย");
+  ws.cell(i, 4).string("vat(%)");
+  ws.cell(i, 5).string("ยอดขาย");
+  ws.cell(i, 6).string("ภาษี");
+  ws.cell(i, 7).string("รวม");
   i++;
   j = 1;
   resultSum.forEach(detail => {
@@ -306,23 +315,23 @@ function writeXLS(orders, wb, filename) {
       ws.cell(i, 3)
         .number(detail.quantity || 0)
         .style(numStyle);
+      // ws.cell(i, 4)
+      //   .number(detail.unit_price || 0)
+      //   .style(numStyle);
       ws.cell(i, 4)
-        .number(detail.unit_price || 0)
-        .style(numStyle);
-      ws.cell(i, 5)
         .number((vat_rate - 1) * 100)
         .style(numStyle);
-      ws.cell(i, 6)
-        .number((detail.unit_price * detail.quantity) / vat_rate)
+      ws.cell(i, 5)
+        .number((detail.subtotal) / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
+      ws.cell(i, 6)
         .number(
-          detail.unit_price * detail.quantity -
-            (detail.unit_price * detail.quantity) / vat_rate
+          detail.subtotal -
+            (detail.subtotal / vat_rate)
         )
         .style(numStyle);
-      ws.cell(i, 8)
-        .number(detail.unit_price * detail.quantity)
+      ws.cell(i, 7)
+        .number(detail.subtotal)
         .style(numStyle);
       i++;
       j++;
@@ -640,9 +649,22 @@ function isVat(productName) {
     "ข้าวกล้องเหนียวธรรมชาติ 5 กก.",
     "ข้าวกล้องเหนียวธรรมชาติ 1 กก",
     "ข้าวหอมมะลิ 1 กก.",
-    "ข้าวหอมมะลิ 5 กก."
+    "ข้าวหอมมะลิ 5 กก.",
+    "ปุ๋ยน้ำบำรุงดิน 1 ลิตร",
+    "ปุ๋ยเม็ดบำรุงดิน 701(1กก)",
+    "ปุ๋ยเม็ดเร่งดอกผล 702(1กก)",
+    "น้ำส้มควันไม้",
+    "ปุ๋ยมูลไส้เดือน",
+    "ปุ๋ยน้ำไวต้า",
+    "ปุ๋ยเม็ดบำรุงดิน 701(25กก)",
+    "ปุ๋ยอินทรีย์น้ำเพชร 202",
+    "ปุ๋ยเม็ดเร่งดอกผล 702(50กก)",
+    "ปุ๋ยอินทรีย์น้ำเพชร 204",
+    "ปุ๋ยอินทรีย์น้ำเพชร 201"
   ];
   return noVate.indexOf(productName) === -1;
 }
 
+
 run("2020-02-29");
+

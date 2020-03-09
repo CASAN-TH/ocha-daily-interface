@@ -1,15 +1,13 @@
 const ocha = require("./libs/ocha");
+const p356 = require("./libs/page365");
 const xls = require("excel4node");
-
-// let start_time = 1580490000;
-// let end_time = 1582995599;
 
 const run = async dateStr => {
   var wb = new xls.Workbook();
   var start = new Date(dateStr);
   start.setHours(0, 0, 0, 0);
 
-  var end = new Date();
+  var end = new Date(dateStr);
   end.setHours(23, 59, 59, 0);
   let start_time = start / 1000;
   let end_time = end / 1000;
@@ -23,7 +21,9 @@ const run = async dateStr => {
     start_time,
     end_time
   );
-  if (orders) writeXLS(orders, wb, shops.shops[0].profile.shop_name);
+  if (orders) {
+    writeXLS(orders, wb, shops.shops[0].profile.shop_name);
+  }
 
   const orders2 = await ocha.getDailyOrdersByShop(
     shops.shops[1].shop_id,
@@ -51,19 +51,30 @@ const run = async dateStr => {
     start_time,
     end_time
   );
-  if (orders5) writeXLS(orders5, wb, shops.shops[4].profile.shop_name);
+  if (orders5)
+    writeXLS(
+      orders5,
+      wb,
+      shops.shops[4].profile.shop_name.replace(" (ร้านยักษ์กะโจน)", "")
+    );
+
+  const orders6 = await p356.getOrders(start_time, end_time);
+  if (orders6) {
+    write365XLS(orders6, wb, "page365");
+  }
 
   wb.write(dateStr + ".xlsx");
 };
 
-function writeXLS(orders, wb, filename) {
+function write365XLS(orders, wb, filename) {
   var result = [];
   orders.forEach(order => {
+    // console.log(order.items)
     order.items.forEach(value => {
       result.push({
-        item_cid: value.item_cid,
-        item_name: value.item_name,
-        unit_price: parseInt(value.money_nominal),
+        item_cid: value.name,
+        item_name: value.name,
+        unit_price: value.price,
         quantity: value.quantity
       });
     });
@@ -90,45 +101,217 @@ function writeXLS(orders, wb, filename) {
     numberFormat: "#,##0.00; (#,##0.00); -"
   });
 
+  ws.cell(1, 1).string("รายการที่ต้องจ่ายภาษี");
   //ลำดับ	ชื่อสินค้า	จำนวน	น้ำหนัก	ยอดขาย
-  ws.cell(1, 1).string("ลำดับ");
-  ws.cell(1, 2).string("ชื่อสินค้า");
-  ws.cell(1, 3).string("จำนวน");
-  ws.cell(1, 4).string("ราคาต่อหน่วย");
-  ws.cell(1, 5).string("vat(%)");
-  ws.cell(1, 6).string("จำนวนเงิน");
-  ws.cell(1, 7).string("ภาษี");
-  ws.cell(1, 8).string("รวม");
+  ws.cell(2, 1).string("ลำดับ");
+  ws.cell(2, 2).string("ชื่อสินค้า");
+  ws.cell(2, 3).string("จำนวน");
+  ws.cell(2, 4).string("ราคาต่อหน่วย");
+  ws.cell(2, 5).string("vat(%)");
+  ws.cell(2, 6).string("จำนวนเงิน");
+  ws.cell(2, 7).string("ภาษี");
+  ws.cell(2, 8).string("รวม");
 
-  var i = 2;
+  var i = 3;
   resultSum.forEach(detail => {
-    // console.log(detail.item_name + ":" + isVat(detail.item_name));
-    var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
-    // console.log(vat_rate);
-    ws.cell(i, 1).number(i - 1);
-    ws.cell(i, 2).string(detail.item_name);
-    ws.cell(i, 3)
-      .number(detail.quantity || 0)
-      .style(numStyle);
-    ws.cell(i, 4)
-      .number(detail.unit_price || 0)
-      .style(numStyle);
-    ws.cell(i, 5)
-      .number((vat_rate - 1) * 100)
-      .style(numStyle);
-    ws.cell(i, 6)
-      .number((detail.unit_price * detail.quantity) / vat_rate)
-      .style(numStyle);
-    ws.cell(i, 7)
-      .number(
-        detail.unit_price * detail.quantity -
-          (detail.unit_price * detail.quantity) / vat_rate
-      )
-      .style(numStyle);
-    ws.cell(i, 8)
-      .number(detail.unit_price * detail.quantity)
-      .style(numStyle);
-    i++;
+    if (isVat(detail.item_name)) {
+      // console.log(detail.item_name + ":" + isVat(detail.item_name));
+      var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
+      // console.log(vat_rate);
+      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 2).string(detail.item_name);
+      ws.cell(i, 3)
+        .number(detail.quantity || 0)
+        .style(numStyle);
+      ws.cell(i, 4)
+        .number(detail.unit_price || 0)
+        .style(numStyle);
+      ws.cell(i, 5)
+        .number((vat_rate - 1) * 100)
+        .style(numStyle);
+      ws.cell(i, 6)
+        .number((detail.unit_price * detail.quantity) / vat_rate)
+        .style(numStyle);
+      ws.cell(i, 7)
+        .number(
+          detail.unit_price * detail.quantity -
+            (detail.unit_price * detail.quantity) / vat_rate
+        )
+        .style(numStyle);
+      ws.cell(i, 8)
+        .number(detail.unit_price * detail.quantity)
+        .style(numStyle);
+      i++;
+    }
+  });
+  i++;
+  ws.cell(i, 1).string("รายการที่ไม่ต้องจ่ายภาษี");
+  i++;
+  //ลำดับ	ชื่อสินค้า	จำนวน	น้ำหนัก	ยอดขาย
+  ws.cell(i, 1).string("ลำดับ");
+  ws.cell(i, 2).string("ชื่อสินค้า");
+  ws.cell(i, 3).string("จำนวน");
+  ws.cell(i, 4).string("ราคาต่อหน่วย");
+  ws.cell(i, 5).string("vat(%)");
+  ws.cell(i, 6).string("จำนวนเงิน");
+  ws.cell(i, 7).string("ภาษี");
+  ws.cell(i, 8).string("รวม");
+  i++;
+
+  resultSum.forEach(detail => {
+    if (!isVat(detail.item_name)) {
+      // console.log(detail.item_name + ":" + isVat(detail.item_name));
+      var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
+      // console.log(vat_rate);
+      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 2).string(detail.item_name);
+      ws.cell(i, 3)
+        .number(detail.quantity || 0)
+        .style(numStyle);
+      ws.cell(i, 4)
+        .number(detail.unit_price || 0)
+        .style(numStyle);
+      ws.cell(i, 5)
+        .number((vat_rate - 1) * 100)
+        .style(numStyle);
+      ws.cell(i, 6)
+        .number((detail.unit_price * detail.quantity) / vat_rate)
+        .style(numStyle);
+      ws.cell(i, 7)
+        .number(
+          detail.unit_price * detail.quantity -
+            (detail.unit_price * detail.quantity) / vat_rate
+        )
+        .style(numStyle);
+      ws.cell(i, 8)
+        .number(detail.unit_price * detail.quantity)
+        .style(numStyle);
+      i++;
+    }
+  });
+}
+
+function writeXLS(orders, wb, filename) {
+  var result = [];
+  orders.forEach(order => {
+    order.items.forEach(value => {
+      result.push({
+        item_cid: value.item_cid,
+        item_name: value.item_name,
+        unit_price: parseInt(value.money_nominal) / value.quantity,
+        quantity: value.quantity
+      });
+    });
+  });
+  // console.log(result);
+  resultSum = [];
+  result.reduce(function(res, value) {
+    if (!res[value.item_cid]) {
+      res[value.item_cid] = {
+        item_cid: value.item_cid,
+        item_name: value.item_name,
+        unit_price: value.unit_price,
+        vat_rate: 7,
+        quantity: value.quantity
+      };
+      resultSum.push(res[value.item_cid]);
+    }
+    res[value.item_cid].quantity += value.quantity;
+    return res;
+  }, {});
+  // console.log(resultSum);
+  var ws = wb.addWorksheet(filename);
+  var numStyle = wb.createStyle({
+    numberFormat: "#,##0.00; (#,##0.00); -"
+  });
+
+  ws.cell(1, 1).string("รายการที่ต้องจ่ายภาษี");
+  //ลำดับ	ชื่อสินค้า	จำนวน	น้ำหนัก	ยอดขาย
+  ws.cell(2, 1).string("ลำดับ");
+  ws.cell(2, 2).string("ชื่อสินค้า");
+  ws.cell(2, 3).string("จำนวน");
+  ws.cell(2, 4).string("ราคาต่อหน่วย");
+  ws.cell(2, 5).string("vat(%)");
+  ws.cell(2, 6).string("จำนวนเงิน");
+  ws.cell(2, 7).string("ภาษี");
+  ws.cell(2, 8).string("รวม");
+
+  var i = 3;
+  resultSum.forEach(detail => {
+    if (isVat(detail.item_name)) {
+      // console.log(detail.item_name + ":" + isVat(detail.item_name));
+      var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
+      // console.log(vat_rate);
+      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 2).string(detail.item_name);
+      ws.cell(i, 3)
+        .number(detail.quantity || 0)
+        .style(numStyle);
+      ws.cell(i, 4)
+        .number(detail.unit_price || 0)
+        .style(numStyle);
+      ws.cell(i, 5)
+        .number((vat_rate - 1) * 100)
+        .style(numStyle);
+      ws.cell(i, 6)
+        .number((detail.unit_price * detail.quantity) / vat_rate)
+        .style(numStyle);
+      ws.cell(i, 7)
+        .number(
+          detail.unit_price * detail.quantity -
+            (detail.unit_price * detail.quantity) / vat_rate
+        )
+        .style(numStyle);
+      ws.cell(i, 8)
+        .number(detail.unit_price * detail.quantity)
+        .style(numStyle);
+      i++;
+    }
+  });
+  i++;
+  ws.cell(i, 1).string("รายการที่ไม่ต้องจ่ายภาษี");
+  i++;
+  //ลำดับ	ชื่อสินค้า	จำนวน	น้ำหนัก	ยอดขาย
+  ws.cell(i, 1).string("ลำดับ");
+  ws.cell(i, 2).string("ชื่อสินค้า");
+  ws.cell(i, 3).string("จำนวน");
+  ws.cell(i, 4).string("ราคาต่อหน่วย");
+  ws.cell(i, 5).string("vat(%)");
+  ws.cell(i, 6).string("จำนวนเงิน");
+  ws.cell(i, 7).string("ภาษี");
+  ws.cell(i, 8).string("รวม");
+  i++;
+
+  resultSum.forEach(detail => {
+    if (!isVat(detail.item_name)) {
+      // console.log(detail.item_name + ":" + isVat(detail.item_name));
+      var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
+      // console.log(vat_rate);
+      ws.cell(i, 1).number(i - 1);
+      ws.cell(i, 2).string(detail.item_name);
+      ws.cell(i, 3)
+        .number(detail.quantity || 0)
+        .style(numStyle);
+      ws.cell(i, 4)
+        .number(detail.unit_price || 0)
+        .style(numStyle);
+      ws.cell(i, 5)
+        .number((vat_rate - 1) * 100)
+        .style(numStyle);
+      ws.cell(i, 6)
+        .number((detail.unit_price * detail.quantity) / vat_rate)
+        .style(numStyle);
+      ws.cell(i, 7)
+        .number(
+          detail.unit_price * detail.quantity -
+            (detail.unit_price * detail.quantity) / vat_rate
+        )
+        .style(numStyle);
+      ws.cell(i, 8)
+        .number(detail.unit_price * detail.quantity)
+        .style(numStyle);
+      i++;
+    }
   });
 }
 
@@ -438,7 +621,11 @@ function isVat(productName) {
     "น้ำผึ้งดอกไม้ป่า",
     "ถ่านไม้",
     "ผักกาดเขียวปลี",
-    "มะม่วงเบา"
+    "มะม่วงเบา",
+    "ข้าวกล้องเหนียวธรรมชาติ 5 กก.",
+    "ข้าวกล้องเหนียวธรรมชาติ 1 กก",
+    "ข้าวหอมมะลิ 1 กก.",
+    "ข้าวหอมมะลิ 5 กก."
   ];
   return noVate.indexOf(productName) === -1;
 }

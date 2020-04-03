@@ -3,8 +3,8 @@ const p356 = require("./libs/page365");
 const xls = require("excel4node");
 
 const run = async dateStr => {
-  
   var wb = new xls.Workbook();
+  
   var start = new Date(dateStr);
   start.setHours(0, 0, 0, 0);
 
@@ -13,11 +13,11 @@ const run = async dateStr => {
   let start_time = start / 1000;
   let end_time = end / 1000;
   const shops = await ocha.getOchaShopList();
-  
+
   if (shops.error_code !== 0) {
     process.exit(0);
   }
-
+  
   const orders = await ocha.getDailyOrdersByShop(
     shops.shops[0].shop_id,
     start_time,
@@ -68,6 +68,7 @@ const run = async dateStr => {
   }
 
   wb.write(dateStr + ".xlsx");
+  return true;
 };
 
 function write365XLS(orders, wb, filename) {
@@ -95,11 +96,11 @@ function write365XLS(orders, wb, filename) {
         quantity: value.quantity
       };
       resultSum.push(res[value.item_cid]);
-    }else{
+    } else {
       res[value.item_cid].quantity += value.quantity;
       res[value.item_cid].subtotal += value.subtotal;
     }
-    
+
     return res;
   }, {});
   // console.log(resultSum);
@@ -138,13 +139,10 @@ function write365XLS(orders, wb, filename) {
         .number((vat_rate - 1) * 100)
         .style(numStyle);
       ws.cell(i, 5)
-        .number((detail.subtotal) / vat_rate)
+        .number(detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 6)
-        .number(
-          detail.subtotal -
-            (detail.subtotal / vat_rate)
-        )
+        .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 7)
         .number(detail.subtotal)
@@ -179,18 +177,15 @@ function write365XLS(orders, wb, filename) {
         .style(numStyle);
       // ws.cell(i, 4)
       //   .number(detail.unit_price || 0)
-        // .style(numStyle);
+      // .style(numStyle);
       ws.cell(i, 4)
         .number((vat_rate - 1) * 100)
         .style(numStyle);
       ws.cell(i, 5)
-        .number((detail.subtotal) / vat_rate)
+        .number(detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i,6)
-        .number(
-          detail.subtotal -
-            (detail.subtotal / vat_rate)
-        )
+      ws.cell(i, 6)
+        .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 7)
         .number(detail.subtotal)
@@ -279,10 +274,7 @@ function writeXLS(orders, wb, filename) {
         .number(detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 6)
-        .number(
-          detail.subtotal -
-            (detail.subtotal / vat_rate)
-        )
+        .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 7)
         .number(detail.subtotal)
@@ -322,13 +314,10 @@ function writeXLS(orders, wb, filename) {
         .number((vat_rate - 1) * 100)
         .style(numStyle);
       ws.cell(i, 5)
-        .number((detail.subtotal) / vat_rate)
+        .number(detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 6)
-        .number(
-          detail.subtotal -
-            (detail.subtotal / vat_rate)
-        )
+        .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
       ws.cell(i, 7)
         .number(detail.subtotal)
@@ -666,5 +655,4 @@ function isVat(productName) {
 }
 
 
-run("2020-02-29");
-
+run("2020-03-01");

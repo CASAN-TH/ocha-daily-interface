@@ -12,7 +12,11 @@
   "license": "ISC",
   "dependencies": {
     "excel4node": "^1.7.2",
+    "js-md5": "^0.7.3",
     "node-fetch": "^2.6.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "sha1": "^1.1.1",
+    "sha256": "^0.2.0",
+    "utf8": "^3.0.0"
   }
 }

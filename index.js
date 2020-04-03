@@ -655,4 +655,4 @@ function isVat(productName) {
 }
 
 
-run("2020-03-01");
+run("2020-03-28");

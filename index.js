@@ -2,9 +2,9 @@ const ocha = require("./libs/ocha");
 const p356 = require("./libs/page365");
 const xls = require("excel4node");
 
-const run = async dateStr => {
+const run = async (dateStr) => {
   var wb = new xls.Workbook();
-  
+
   var start = new Date(dateStr);
   start.setHours(0, 0, 0, 0);
 
@@ -13,11 +13,11 @@ const run = async dateStr => {
   let start_time = start / 1000;
   let end_time = end / 1000;
   const shops = await ocha.getOchaShopList();
-
+  // console.log(shops);
   if (shops.error_code !== 0) {
     process.exit(0);
   }
-  
+
   const orders = await ocha.getDailyOrdersByShop(
     shops.shops[0].shop_id,
     start_time,
@@ -73,27 +73,27 @@ const run = async dateStr => {
 
 function write365XLS(orders, wb, filename) {
   var result = [];
-  orders.forEach(order => {
+  orders.forEach((order) => {
     // console.log(order.items)
-    order.items.forEach(value => {
+    order.items.forEach((value) => {
       result.push({
         item_cid: value.name,
         item_name: value.name,
         subtotal: value.price * value.quantity,
-        quantity: value.quantity
+        quantity: value.quantity,
       });
     });
   });
   // console.log(result);
   resultSum = [];
-  result.reduce(function(res, value) {
+  result.reduce(function (res, value) {
     if (!res[value.item_cid]) {
       res[value.item_cid] = {
         item_cid: value.item_cid,
         item_name: value.item_name,
         subtotal: value.subtotal,
         vat_rate: 7,
-        quantity: value.quantity
+        quantity: value.quantity,
       };
       resultSum.push(res[value.item_cid]);
     } else {
@@ -106,7 +106,7 @@ function write365XLS(orders, wb, filename) {
   // console.log(resultSum);
   var ws = wb.addWorksheet(filename);
   var numStyle = wb.createStyle({
-    numberFormat: "#,##0.00; (#,##0.00); -"
+    numberFormat: "#,##0.00; (#,##0.00); -",
   });
 
   ws.cell(1, 1).string("รายการที่ต้องจ่ายภาษี");
@@ -122,7 +122,7 @@ function write365XLS(orders, wb, filename) {
 
   var i = 3;
   var j = 1;
-  resultSum.forEach(detail => {
+  resultSum.forEach((detail) => {
     if (isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
@@ -144,9 +144,7 @@ function write365XLS(orders, wb, filename) {
       ws.cell(i, 6)
         .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
-        .number(detail.subtotal)
-        .style(numStyle);
+      ws.cell(i, 7).number(detail.subtotal).style(numStyle);
       i++;
       j++;
     }
@@ -165,7 +163,7 @@ function write365XLS(orders, wb, filename) {
   ws.cell(i, 7).string("รวม");
   i++;
   j = 1;
-  resultSum.forEach(detail => {
+  resultSum.forEach((detail) => {
     if (!isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
@@ -187,9 +185,7 @@ function write365XLS(orders, wb, filename) {
       ws.cell(i, 6)
         .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
-        .number(detail.subtotal)
-        .style(numStyle);
+      ws.cell(i, 7).number(detail.subtotal).style(numStyle);
       i++;
       j++;
     }
@@ -198,22 +194,22 @@ function write365XLS(orders, wb, filename) {
 
 function writeXLS(orders, wb, filename) {
   var result = [];
-  orders.forEach(order => {
+  orders.forEach((order) => {
     // console.log(order.items);
-    order.items.forEach(value => {
+    order.items.forEach((value) => {
       result.push({
         item_cid: value.item_name,
         item_name: value.item_name,
         subtotal: parseInt(value.money_nominal),
         // unit_price: parseInt(value.money_nominal) / value.quantity,
-        quantity: value.quantity
+        quantity: value.quantity,
       });
     });
   });
   // console.log(result);
 
   resultSum = [];
-  result.reduce(function(res, value) {
+  result.reduce(function (res, value) {
     if (!res[value.item_cid]) {
       res[value.item_cid] = {
         item_cid: value.item_cid,
@@ -221,7 +217,7 @@ function writeXLS(orders, wb, filename) {
         vat_rate: 7,
         subtotal: value.subtotal,
         // unit_price: value.unit_price,
-        quantity: value.quantity
+        quantity: value.quantity,
       };
 
       resultSum.push(res[value.item_cid]);
@@ -237,7 +233,7 @@ function writeXLS(orders, wb, filename) {
   // console.log(resultSum);
   var ws = wb.addWorksheet(filename);
   var numStyle = wb.createStyle({
-    numberFormat: "#,##0.00; (#,##0.00); -"
+    numberFormat: "#,##0.00; (#,##0.00); -",
   });
 
   ws.cell(1, 1).string("รายการที่ต้องจ่ายภาษี");
@@ -253,7 +249,7 @@ function writeXLS(orders, wb, filename) {
 
   var i = 3;
   var j = 1;
-  resultSum.forEach(detail => {
+  resultSum.forEach((detail) => {
     if (isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       // if(detail.item_name==="โค้กCoke") console.log(detail)
@@ -276,9 +272,7 @@ function writeXLS(orders, wb, filename) {
       ws.cell(i, 6)
         .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
-        .number(detail.subtotal)
-        .style(numStyle);
+      ws.cell(i, 7).number(detail.subtotal).style(numStyle);
       i++;
       j++;
     }
@@ -297,7 +291,7 @@ function writeXLS(orders, wb, filename) {
   ws.cell(i, 7).string("รวม");
   i++;
   j = 1;
-  resultSum.forEach(detail => {
+  resultSum.forEach((detail) => {
     if (!isVat(detail.item_name)) {
       // console.log(detail.item_name + ":" + isVat(detail.item_name));
       var vat_rate = isVat(detail.item_name) ? 1.07 : 1;
@@ -319,9 +313,7 @@ function writeXLS(orders, wb, filename) {
       ws.cell(i, 6)
         .number(detail.subtotal - detail.subtotal / vat_rate)
         .style(numStyle);
-      ws.cell(i, 7)
-        .number(detail.subtotal)
-        .style(numStyle);
+      ws.cell(i, 7).number(detail.subtotal).style(numStyle);
       i++;
       j++;
     }
@@ -649,10 +641,9 @@ function isVat(productName) {
     "ปุ๋ยอินทรีย์น้ำเพชร 202",
     "ปุ๋ยเม็ดเร่งดอกผล 702(50กก)",
     "ปุ๋ยอินทรีย์น้ำเพชร 204",
-    "ปุ๋ยอินทรีย์น้ำเพชร 201"
+    "ปุ๋ยอินทรีย์น้ำเพชร 201",
   ];
   return noVate.indexOf(productName) === -1;
 }
 
-
-run("2020-03-28");
+run("2020-04-30");

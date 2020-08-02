@@ -646,4 +646,4 @@ function isVat(productName) {
   return noVate.indexOf(productName) === -1;
 }
 
-run("2020-05-07");
+run("2020-07-31");

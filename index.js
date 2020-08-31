@@ -63,6 +63,8 @@ const run = async (dateStr) => {
     );
 
   const orders6 = await p356.getOrders(start_time, end_time);
+  console.log(start_time);
+  console.log(end_time);
   if (orders6) {
     write365XLS(orders6, wb, "page365");
   }
